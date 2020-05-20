@@ -26,3 +26,20 @@ function addRandomGreeting() {
   const greetingContainer = document.getElementById('greeting-container');
   greetingContainer.innerText = greeting;
 }
+
+/**
+ * Adds a random quote to the page.
+ */
+function addRandomQuote() {
+  const quotes =
+      ['"Hakuna Matata" - Timon and Pumbaa', '"The Dude abides." - The Dude', 
+      '"Strange women lying in ponds distributing swords is no basis for a system of government." - Dennis',
+      "\"I'm sorry Dave, I'm afraid I can't do that.\" - HAL 9000", '"Very nice." - Borat'];
+
+  // Pick a random quote.
+  const chosenQuote = quotes[Math.floor(Math.random() * quotes.length)];
+
+  // Add it to the page.
+  const quoteContainer = document.getElementById('quote-container');
+  quoteContainer.innerText = chosenQuote;
+}
