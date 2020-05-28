@@ -43,3 +43,13 @@ function addRandomQuote() {
   const quoteContainer = document.getElementById('quote-container');
   quoteContainer.innerText = chosenQuote;
 }
+
+/**
+ * Loads a music video from a clicked band. 
+ */
+function loadMusicVideo(){
+    const videoContainer = document.getElementById('video-container');
+    videoContainer.empty(); 
+    videoContainer.append("https://www.youtube.com/watch?v=-wVWjl9Kq6U");
+
+}
