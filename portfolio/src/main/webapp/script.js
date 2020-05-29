@@ -48,8 +48,17 @@ function addRandomQuote() {
  * Loads a music video from a clicked band. 
  */
 function loadMusicVideo(){
-    const videoContainer = document.getElementById('video-container');
-    videoContainer.empty(); 
-    videoContainer.append("https://www.youtube.com/watch?v=-wVWjl9Kq6U");
+  const videoContainer = document.getElementById('video-container');
+  videoContainer.empty(); 
+  videoContainer.append("https://www.youtube.com/watch?v=-wVWjl9Kq6U");
 
+}
+
+/**
+ * Fetches a message from the data servlet
+ */
+async function getMsgFromServlet(){
+  const response = await fetch('/data');
+  const msg = await response.text();
+  document.getElementById("servlet-msg-container").innerText = msg; 
 }
