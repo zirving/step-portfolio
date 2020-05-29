@@ -55,10 +55,14 @@ function loadMusicVideo(){
 }
 
 /**
- * Fetches a message from the data servlet
+ * Fetches data from the data servlet
  */
-async function getMsgFromServlet(){
-  const response = await fetch('/data');
-  const msg = await response.text();
-  document.getElementById("servlet-msg-container").innerText = msg; 
+function getDataFromServlet(){
+ fetch('/data').then(response => response.json()).then((data) => { 
+     const dataElement = document.getElementById("servlet-msg-container");
+     dataElement.innerHTML = '';
+     dataElement.appendChild(document.createTextNode(" " + data[0]));
+     dataElement.appendChild(document.createTextNode(" " + data[1]));
+     dataElement.appendChild(document.createTextNode(" " + data[2]));
+ });
 }
