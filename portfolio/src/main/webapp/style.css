@@ -46,6 +46,13 @@ h1{
     width:100%;
 }
 
+#existing-comments{
+    background-color: white;
+    padding: 20px;
+    margin-top: 20px;
+    width:100%;
+}
+
 .leftcolumn {   
   float: left;
   width: 65%;
@@ -103,3 +110,4 @@ h1{
   bottom: 0;
   right: 0;
 }
+

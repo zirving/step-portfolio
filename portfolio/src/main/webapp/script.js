@@ -58,11 +58,42 @@ function loadMusicVideo(){
  * Fetches data from the data servlet
  */
 function getDataFromServlet(){
- fetch('/data').then(response => response.json()).then((data) => { 
-     const dataElement = document.getElementById("servlet-msg-container");
-     dataElement.innerHTML = '';
-     dataElement.appendChild(document.createTextNode(" " + data[0]));
-     dataElement.appendChild(document.createTextNode(" " + data[1]));
-     dataElement.appendChild(document.createTextNode(" " + data[2]));
+  fetch('/data').then(response => response.json()).then((data) => { 
+    const dataElement = document.getElementById("servlet-msg-container");
+    dataElement.innerHTML = '';
+    dataElement.appendChild(document.createTextNode(" " + data[0]));
+    dataElement.appendChild(document.createTextNode(" " + data[1]));
+    dataElement.appendChild(document.createTextNode(" " + data[2]));
  });
+}
+
+function displayComments(){
+  
+  fetch('/data').then(response => response.json()).then((commentHistory) => {
+    const commentSection = document.getElementById("existing-comments");
+    if(commentHistory == -1) {
+      commentSection.innerHTML = " <p> No comments yet. Leave yours!</p>";
+      return;
+    }
+    for(i = 0; i<commentHistory.length;i++){
+      createCommentElement(commentHistory[i].username,commentHistory[i].content);
+    }
+  });
+}
+
+function createCommentElement(user, comment ){
+  const commentElement = document.createElement('div');
+
+  const username = document.createElement('h3');
+  username.appendChild(document.createTextNode(user));
+
+  const content = document.createElement('p');
+  content.appendChild(document.createTextNode(comment));
+
+  const divider = document.createElement('hr');
+
+  commentElement.appendChild(username);
+  commentElement.appendChild(content);
+  commentElement.appendChild(divider);
+  document.getElementById("existing-comments").appendChild(commentElement);
 }

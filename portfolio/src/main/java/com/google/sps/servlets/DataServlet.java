@@ -19,29 +19,54 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.ArrayList;
 import com.google.gson.Gson;
+import com.google.sps.servlets.Comment;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
+  ArrayList<Comment> commentHistory = new ArrayList<Comment>(); 
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    ArrayList<String> data = new ArrayList<String>();
-    data.add("Value 1");
-    data.add("Value 2");
-    data.add("Value 3");
-
-    String json = convertToJsonUsingGson(data);
+    if(commentHistory.isEmpty()){
+        response.setContentType("text/html");
+        response.getWriter().println("-1");
+        return;
+    }
+    String json = convertToJsonUsingGson(commentHistory);
     
     response.setContentType("application/json;");
     response.getWriter().println(json);
   }
 
-  private String convertToJsonUsingGson(ArrayList<String> data) {
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+      String username = getParameter(request,"username-input","Anonymous");
+      String comment = getParameter(request, "comment-input","");
+      commentHistory.add(new Comment(username,comment));
+
+      response.sendRedirect("/index.html#comment-section");
+
+  }
+
+  private String convertToJsonUsingGson(ArrayList<Comment> data) {
     Gson gson = new Gson();
     String json = gson.toJson(data);
     return json;
   }
+
+  /**
+   * @return the request parameter, or the default value if the parameter
+   *         was not specified by the client
+   */
+  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+    String value = request.getParameter(name);
+    if (value == null) {
+      return defaultValue;
+    }
+    return value;
+  }
+  
 }
