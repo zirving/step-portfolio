@@ -31,27 +31,26 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    response.setContentType("application/json;");
     if(commentHistory.isEmpty()){
-        response.setContentType("text/html");
-        response.getWriter().println("-1");
+        response.getWriter().println(convertToJsonUsingGson("No comments found."));
         return;
     }
     String json = convertToJsonUsingGson(commentHistory);
     
-    response.setContentType("application/json;");
     response.getWriter().println(json);
   }
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-      String username = getParameter(request,"username-input","Anonymous");
-      String comment = getParameter(request, "comment-input","");
-      commentHistory.add(new Comment(username,comment));
+      String username = getParameter(request, "username-input", "Anonymous");
+      String comment = getParameter(request, "comment-input", "");
+      commentHistory.add(new Comment(username, comment));
 
       response.sendRedirect("/index.html#comment-section");
 
   }
-
-  private String convertToJsonUsingGson(ArrayList<Comment> data) {
+  
+  private String convertToJsonUsingGson(Object data) {
     Gson gson = new Gson();
     String json = gson.toJson(data);
     return json;

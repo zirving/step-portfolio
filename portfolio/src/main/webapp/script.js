@@ -54,24 +54,11 @@ function loadMusicVideo(){
 
 }
 
-/**
- * Fetches data from the data servlet
- */
-function getDataFromServlet(){
-  fetch('/data').then(response => response.json()).then((data) => { 
-    const dataElement = document.getElementById("servlet-msg-container");
-    dataElement.innerHTML = '';
-    dataElement.appendChild(document.createTextNode(" " + data[0]));
-    dataElement.appendChild(document.createTextNode(" " + data[1]));
-    dataElement.appendChild(document.createTextNode(" " + data[2]));
- });
-}
-
 function displayComments(){
   
   fetch('/data').then(response => response.json()).then((commentHistory) => {
     const commentSection = document.getElementById("existing-comments");
-    if(commentHistory == -1) {
+    if((typeof commentHistory === 'string')&&(commentHistory.localeCompare("No comments found.")==0)) {
       commentSection.innerHTML = " <p> No comments yet. Leave yours!</p>";
       return;
     }
