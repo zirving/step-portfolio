@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="displayComments()">
     <div class = "header">
         <h1> Hello. I'm Zach. Nice to meet you. </h1>
     </div>
@@ -15,11 +15,6 @@
           <a href = "resume.html"> My Work</a>
           <a href = "interests.html"> My Interests</a>
     </div>
-    <div> 
-        <h2> Servlet Data Tester <h2> 
-        <button onclick="getDataFromServlet()">Fetch a message!</button>
-    </div>
-    <div  id = "servlet-msg-container" > </div>
     <div class = "content-row">
       <div class = "leftcolumn">
         <h2> Who am I?</h2>
@@ -50,6 +45,22 @@
               <img src = "/images/profilepic.png" alt = "Profile Pic" >
           </div>
       </div>
+    </div>
+    <div class = "content-row" >
+      <div id = "comment-section" > 
+        <h2> Comments </h2> 
+        <form action="/data" method="POST">
+          <p>Leave a comment below!</p>
+          <h3> Username </h3>
+          <textarea name = "username-input"></textarea>
+          <br><br>
+          <h3> Comment </h3>
+          <textarea name = "comment-input" rows="4" cols="50"></textarea>
+          <br><br>
+          <input type="submit" />
+       </form>
+      </div>
+    <div id = "existing-comments"> </div>
     </div>
     <div class = "footer">
             <ul style="list-style: none;">
