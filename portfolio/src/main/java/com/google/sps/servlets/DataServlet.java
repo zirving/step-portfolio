@@ -23,29 +23,54 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import com.google.gson.Gson;
 import com.google.sps.servlets.Comment;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  ArrayList<Comment> commentHistory = new ArrayList<Comment>(); 
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/json;");
-    if(commentHistory.isEmpty()){
-        response.getWriter().println(convertToJsonUsingGson("No comments found."));
-        return;
+  
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery storedComments = datastore.prepare(query);
+
+    ArrayList<Comment> commentHistory = new ArrayList<Comment>(); 
+    for(Entity comment : storedComments.asIterable()){
+        commentHistory.add(new Comment(
+          (String) comment.getProperty("username"),
+          (String) comment.getProperty("comment")));
     }
+
+    if(commentHistory.isEmpty()){
+      response.getWriter().println(convertToJsonUsingGson("No comments found."));
+      return;
+    }
+
     String json = convertToJsonUsingGson(commentHistory);
-    
     response.getWriter().println(json);
   }
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
       String username = getParameter(request, "username-input", "Anonymous");
       String comment = getParameter(request, "comment-input", "");
-      commentHistory.add(new Comment(username, comment));
+      long timestamp = System.currentTimeMillis();
 
+      Entity commentEntity = new Entity("Comment");
+      commentEntity.setProperty("username", username);
+      commentEntity.setProperty("comment", comment);
+      commentEntity.setProperty("timestamp", timestamp);
+
+      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+      datastore.put(commentEntity);
+  
       response.sendRedirect("/index.html#comment-section");
 
   }

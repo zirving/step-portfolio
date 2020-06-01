@@ -58,17 +58,17 @@ function displayComments(){
   
   fetch('/data').then(response => response.json()).then((commentHistory) => {
     const commentSection = document.getElementById("existing-comments");
-    if((typeof commentHistory === 'string')&&(commentHistory.localeCompare("No comments found.")==0)) {
+    if((typeof commentHistory === 'string') && (commentHistory.localeCompare("No comments found.")==0)) {
       commentSection.innerHTML = " <p> No comments yet. Leave yours!</p>";
       return;
     }
     for(i = 0; i<commentHistory.length;i++){
-      createCommentElement(commentHistory[i].username,commentHistory[i].content);
+      createCommentElement(commentHistory[i].username, commentHistory[i].content);
     }
   });
 }
 
-function createCommentElement(user, comment ){
+function createCommentElement(user, comment){
   const commentElement = document.createElement('div');
 
   const username = document.createElement('h3');
@@ -82,5 +82,6 @@ function createCommentElement(user, comment ){
   commentElement.appendChild(username);
   commentElement.appendChild(content);
   commentElement.appendChild(divider);
+
   document.getElementById("existing-comments").appendChild(commentElement);
 }
