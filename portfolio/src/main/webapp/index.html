@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body onload="displayComments('10')">
+  <body onload="displayComments()">
     <div class = "header">
         <h1> Hello. I'm Zach. Nice to meet you. </h1>
     </div>
@@ -68,6 +68,7 @@
          <option value="50">50</option>
          <option value="All">All</option>
        </select>
+       <button onclick="deleteComments()" type="button">Delete comments.</button>
       </div>
     <div id = "existing-comments"> </div>
     </div>
