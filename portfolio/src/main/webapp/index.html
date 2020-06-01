@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body onload="displayComments()">
+  <body onload="displayComments('10')">
     <div class = "header">
         <h1> Hello. I'm Zach. Nice to meet you. </h1>
     </div>
@@ -59,6 +59,15 @@
           <br><br>
           <input type="submit" />
        </form>
+       <br>
+       <label for="num-of-comments"> Comments Displayed : </label>
+       <select name="comment-limit-selector" id="comment-limit-selector" onChange="updateCommentLimit()">
+         <option value="5">5</option>
+         <option selected value="10">10</option>
+         <option value="20">20</option>
+         <option value="50">50</option>
+         <option value="All">All</option>
+       </select>
       </div>
     <div id = "existing-comments"> </div>
     </div>

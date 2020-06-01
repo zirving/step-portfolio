@@ -54,18 +54,26 @@ function loadMusicVideo(){
 
 }
 
-function displayComments(){
-  
-  fetch('/data').then(response => response.json()).then((commentHistory) => {
+function displayComments(commentLimit){
+  const url = '/data?comment-limit=' + commentLimit;
+  fetch(url).then(response => response.json()).then((commentHistory) => {
     const commentSection = document.getElementById("existing-comments");
     if(commentHistory.length == 0) {
       commentSection.innerHTML = " <p> No comments yet. Leave yours!</p>";
       return;
+    } else {
+      document.getElementById("existing-comments").innerHTML = "";
+      for(i = 0; i<commentHistory.length;i++){
+        createCommentElement(commentHistory[i].username, commentHistory[i].content);
+      }
     }
-    for(i = 0; i<commentHistory.length;i++){
-      createCommentElement(commentHistory[i].username, commentHistory[i].content);
-    }
+
   });
+}
+
+function updateCommentLimit(){
+  const commentLimit = document.getElementById("comment-limit-selector").value; 
+  displayComments(commentLimit);
 }
 
 function createCommentElement(user, comment){
