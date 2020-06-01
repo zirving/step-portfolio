@@ -58,7 +58,7 @@ function displayComments(){
   
   fetch('/data').then(response => response.json()).then((commentHistory) => {
     const commentSection = document.getElementById("existing-comments");
-    if((typeof commentHistory === 'string') && (commentHistory.localeCompare("No comments found.")==0)) {
+    if(commentHistory.length == 0) {
       commentSection.innerHTML = " <p> No comments yet. Leave yours!</p>";
       return;
     }

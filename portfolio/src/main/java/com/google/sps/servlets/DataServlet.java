@@ -49,10 +49,10 @@ public class DataServlet extends HttpServlet {
           (String) comment.getProperty("comment")));
     }
 
-    if(commentHistory.isEmpty()){
+    /*if(commentHistory.isEmpty()){
       response.getWriter().println(convertToJsonUsingGson("No comments found."));
       return;
-    }
+    }*/
 
     String json = convertToJsonUsingGson(commentHistory);
     response.getWriter().println(json);
