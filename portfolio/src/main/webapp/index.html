@@ -6,13 +6,81 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
-    <div id="content">
-      <h1>My Portfolio</h1>
-      <p>This is my portfolio.</p>
-      <p>Click here to get a random message:</p>
-      <button onclick="addRandomGreeting()">Hello</button>
-      <div id="greeting-container"></div>
+  <body onload="displayComments()">
+    <div class = "header">
+        <h1> Hello. I'm Zach. Nice to meet you. </h1>
+    </div>
+    <div class = "topnav"> 
+          <a href = "index.html"> Home</a>
+          <a href = "resume.html"> My Work</a>
+          <a href = "interests.html"> My Interests</a>
+          <a href = "data.html"> Data Display </a>
+    </div>
+    <div class = "content-row">
+      <div class = "leftcolumn">
+        <h2> Who am I?</h2>
+
+        <p> I am a junior year student at Loyola Marymount University in Los Angeles.
+            I am studying Computer Science and Economics, with minors in Philosophy and 
+            Mathematics. </p> 
+
+        <p> My professional interests are varied but are united around a central mission of 
+            using data and logical methods to find solutions to complex problems. I enjoy 
+            coming up with an algorithmic solution to a problem that would be impossible
+            for a person to solve. 
+            Programming has been one of my primary ways to scratch this problem solving itch. </p>
+
+        <p> I also enjoy learning and teaching. Usually I am reading at least two books at a time, 
+            which leads to me finding more and more things I don't know enough about, creating a 
+            never ending cycle. Teaching is the other side of learning for me, and I have been a tutor 
+            either profressionally or casually for over five years. </p>
+        
+        <p> Outside of work, I love anything to do with the outdoors. Hiking and camping are some of my favorite 
+            ways to get back to nature, and I love the water, enjoy time at the beach, swimming, and wakeboarding. 
+            Music is also a passion of mine, and I am always seeking out good music, both new and old. I also play 
+            the guitar, and am slowly improving. Baking has also recently become a hobby of mine, 
+            and I enjoy making tasty food and sharing it with others. </p>
+      </div>
+      <div class = "rightcolumn"> 
+          <div id  = "profilepic">
+              <img src = "/images/profilepic.png" alt = "Profile Pic" >
+          </div>
+      </div>
+    </div>
+    <div class = "content-row" >
+      <div id = "comment-section" > 
+        <h2> Comments </h2> 
+        <form action="/data" method="POST">
+          <p>Leave a comment below!</p>
+          <h3> Username </h3>
+          <textarea name = "username-input"></textarea>
+          <br><br>
+          <h3> Comment </h3>
+          <textarea name = "comment-input" rows="4" cols="50"></textarea>
+          <br><br>
+          <input type="submit" />
+       </form>
+       <br>
+       <label for="num-of-comments"> Comments Displayed : </label>
+       <select name="comment-limit-selector" id="comment-limit-selector" onChange="updateCommentLimit()">
+         <option value="5">5</option>
+         <option selected value="10">10</option>
+         <option value="20">20</option>
+         <option value="50">50</option>
+         <option value="All">All</option>
+       </select>
+       <button onclick="deleteComments()" type="button">Delete comments.</button>
+      </div>
+    <div id = "existing-comments"> </div>
+    </div>
+    <div class = "footer">
+            <ul style="list-style: none;">
+              <div> 
+                <li> <a href = "https://www.linkedin.com/in/zach-irving/" > <img src = "/images/linkedinicon.png" alt = "LinkedIn Profile" </a> </li>
+                <li> <a href = "https://github.com/zirving"> <img src = "/images/githubicon.png" alt = "Github Profile" </a> </li>
+              </div>
+            </ul>
+            <img src = "/images/email.png" alt = "email address"> 
     </div>
   </body>
 </html>
