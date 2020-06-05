@@ -57,6 +57,37 @@ public final class FindMeetingQueryTest {
   }
 
   @Test
+  public void unsharedAttendees() {
+    // Ensure containsSharedAttendees returns false when no attendees are shared
+
+    Collection<String> attendeeSet1= new ArrayList<String>(Arrays.asList(PERSON_A));
+    Collection<String> attendeeSet2= new ArrayList<String>(Arrays.asList(PERSON_B));
+    
+    FindMeetingQuery test = new FindMeetingQuery();
+
+    boolean expected = false;
+    boolean actual = test.containsSharedAttendees(attendeeSet1, attendeeSet2);
+
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void sharedAttendees() {
+    // Ensure containsSharedAttendees returns true when an attendee is shareed
+
+    Collection<String> attendeeSet1= new ArrayList<String>(Arrays.asList(PERSON_A));
+    Collection<String> attendeeSet2= new ArrayList<String>(Arrays.asList(PERSON_A, PERSON_B));
+    
+    FindMeetingQuery test = new FindMeetingQuery();
+
+    boolean expected = true;
+    boolean actual = test.containsSharedAttendees(attendeeSet1, attendeeSet2);
+
+    Assert.assertEquals(expected, actual);
+  }
+
+
+  @Test
   public void optionsForNoAttendees() {
     MeetingRequest request = new MeetingRequest(NO_ATTENDEES, DURATION_1_HOUR);
 
@@ -270,5 +301,6 @@ public final class FindMeetingQueryTest {
 
     Assert.assertEquals(expected, actual);
   }
+  
 }
 
