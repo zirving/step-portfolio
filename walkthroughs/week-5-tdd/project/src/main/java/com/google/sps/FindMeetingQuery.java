@@ -31,15 +31,30 @@ public final class FindMeetingQuery {
     if(request.getDuration() > TimeRange.WHOLE_DAY.duration()){
         return new ArrayList<TimeRange>();
     }
-
+    
+   
     for(Event meeting : meetings){
         if(containsSharedAttendees(meeting.getAttendees(), attendees)) {
           validTimes = removeInvalidTime(validTimes, meeting.getWhen());
         }
     }
-    
     validTimes.removeIf(i -> i.duration() < request.getDuration());
-    return validTimes;
+
+    
+    Collection<String> optionalAttendees = request.getOptionalAttendees();
+    ArrayList<TimeRange> validTimesWithOptional= validTimes;
+    for(Event meeting : meetings){
+        if(containsSharedAttendees(meeting.getAttendees(), optionalAttendees)) {
+          validTimesWithOptional = removeInvalidTime(validTimesWithOptional, meeting.getWhen());
+        }
+    }
+    validTimesWithOptional.removeIf(i -> i.duration() < request.getDuration());
+
+    if(validTimesWithOptional.isEmpty()) {
+      return validTimes;
+    } else {
+      return validTimesWithOptional;
+    }
   }
   
   /** @return true if the two sets contain any shared attendees. 
