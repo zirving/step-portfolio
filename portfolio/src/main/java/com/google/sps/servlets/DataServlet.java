@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Iterator;
 import com.google.gson.Gson;
 import com.google.sps.servlets.Comment;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -42,18 +43,8 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery storedComments = datastore.prepare(query);
 
-    ArrayList<Comment> commentHistory = new ArrayList<Comment>(); 
-    for(Entity comment : storedComments.asIterable()){
-        commentHistory.add(new Comment(
-          (String) comment.getProperty("username"),
-          (String) comment.getProperty("comment")));
-    }
-
-    if(commentHistory.isEmpty()){
-      response.getWriter().println(convertToJsonUsingGson("No comments found."));
-      return;
-    }
-
+    int commentLimit = getCommentLimit(request, storedComments.countEntities());
+    ArrayList<Comment> commentHistory = getCommentHistory(storedComments, commentLimit);
     String json = convertToJsonUsingGson(commentHistory);
     response.getWriter().println(json);
   }
@@ -91,6 +82,39 @@ public class DataServlet extends HttpServlet {
       return defaultValue;
     }
     return value;
+  }
+
+  /**
+   * @return the requested number of comments to be shown, or, if none is requested, 
+   * the total number of comments in the comment history. 
+   */
+  private int getCommentLimit(HttpServletRequest request, int total) {
+    String requestedCommentLimit = getParameter(request, "comment-limit", "10");
+    int commentLimit;
+    if(requestedCommentLimit.equals("All")){
+      commentLimit = total;
+    } else {
+      commentLimit = Integer.parseInt(requestedCommentLimit);
+    }
+    return commentLimit; 
+  }
+
+  /**
+   * @return An ArrayList containing the commentHistory up to the given commentLimit
+   */
+  private ArrayList<Comment> getCommentHistory(PreparedQuery storedComments, int commentLimit) {
+    ArrayList<Comment> commentHistory = new ArrayList<Comment>(); 
+    
+    Iterator<Entity> commentIterator = storedComments.asIterator();
+    while((commentLimit > 0) && (commentIterator.hasNext())) {
+        Entity comment = commentIterator.next();
+        commentHistory.add(new Comment(
+          (String) comment.getProperty("username"),
+          (String) comment.getProperty("comment")));
+        commentLimit--; 
+    }
+
+    return commentHistory;
   }
   
 }

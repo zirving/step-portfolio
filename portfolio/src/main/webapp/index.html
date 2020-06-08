@@ -59,6 +59,16 @@
           <br><br>
           <input type="submit" />
        </form>
+       <br>
+       <label for="num-of-comments"> Comments Displayed : </label>
+       <select name="comment-limit-selector" id="comment-limit-selector" onChange="updateCommentLimit()">
+         <option value="5">5</option>
+         <option selected value="10">10</option>
+         <option value="20">20</option>
+         <option value="50">50</option>
+         <option value="All">All</option>
+       </select>
+       <button onclick="deleteComments()" type="button">Delete comments.</button>
       </div>
     <div id = "existing-comments"> </div>
     </div>

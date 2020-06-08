@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+var DEFAULT_COMMENT_LIMIT = '10'; 
+
 /**
  * Adds a random greeting to the page.
  */
@@ -54,18 +56,33 @@ function loadMusicVideo(){
 
 }
 
-function displayComments(){
-  
-  fetch('/data').then(response => response.json()).then((commentHistory) => {
+function displayComments(commentLimit){
+  if(typeof commentLimit === 'undefined'){
+      commentLimit = DEFAULT_COMMENT_LIMIT;
+  }
+  const url = '/data?comment-limit=' + commentLimit;
+  fetch(url).then(response => response.json()).then((commentHistory) => {
     const commentSection = document.getElementById("existing-comments");
-    if((typeof commentHistory === 'string') && (commentHistory.localeCompare("No comments found.")==0)) {
+    if(commentHistory.length == 0) {
       commentSection.innerHTML = " <p> No comments yet. Leave yours!</p>";
       return;
-    }
-    for(i = 0; i<commentHistory.length;i++){
-      createCommentElement(commentHistory[i].username, commentHistory[i].content);
+    } else {
+      document.getElementById("existing-comments").innerHTML = "";
+      for(i = 0; i<commentHistory.length;i++){
+        createCommentElement(commentHistory[i].username, commentHistory[i].content);
+      }
     }
   });
+}
+
+function updateCommentLimit(){
+  const commentLimit = document.getElementById("comment-limit-selector").value; 
+  displayComments(commentLimit);
+}
+
+function deleteComments(){
+    const method = {method : 'POST'};
+    fetch('/delete-data', method).then(displayComments());
 }
 
 function createCommentElement(user, comment){
