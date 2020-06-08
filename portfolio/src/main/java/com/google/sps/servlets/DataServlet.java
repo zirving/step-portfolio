@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Iterator;
 import com.google.gson.Gson;
 import com.google.sps.servlets.Comment;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -88,7 +89,7 @@ public class DataServlet extends HttpServlet {
    * the total number of comments in the comment history. 
    */
   private int getCommentLimit(HttpServletRequest request, int total) {
-    String requestedCommentLimit = getParameter(request, "comment-limit", "All");
+    String requestedCommentLimit = getParameter(request, "comment-limit", "10");
     int commentLimit;
     if(requestedCommentLimit.equals("All")){
       commentLimit = total;
@@ -103,16 +104,16 @@ public class DataServlet extends HttpServlet {
    */
   private ArrayList<Comment> getCommentHistory(PreparedQuery storedComments, int commentLimit) {
     ArrayList<Comment> commentHistory = new ArrayList<Comment>(); 
-    for(Entity comment : storedComments.asIterable()){
+    
+    Iterator<Entity> commentIterator = storedComments.asIterator();
+    while((commentLimit > 0) && (commentIterator.hasNext())) {
+        Entity comment = commentIterator.next();
         commentHistory.add(new Comment(
           (String) comment.getProperty("username"),
           (String) comment.getProperty("comment")));
-
-        commentLimit--;
-        if(commentLimit <= 0){
-            break;
-        }
+        commentLimit--; 
     }
+
     return commentHistory;
   }
   
