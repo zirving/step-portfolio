@@ -59,7 +59,7 @@ public class DataServlet extends HttpServlet {
       commentEntity.setProperty("comment", comment);
       commentEntity.setProperty("timestamp", timestamp);
 
-      //updateCommentData(comment);
+      updateCommentData(comment);
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(commentEntity);
@@ -67,18 +67,6 @@ public class DataServlet extends HttpServlet {
       response.sendRedirect("/index.html#comment-section");
 
   }
-
-  static void authImplicit() {
-  // If you don't specify credentials when constructing the client, the client library will
-  // look for credentials via the environment variable GOOGLE_APPLICATION_CREDENTIALS.
-  Storage storage = StorageOptions.getDefaultInstance().getService();
-
-  System.out.println("Buckets:");
-  Page<Bucket> buckets = storage.list();
-  for (Bucket bucket : buckets.iterateAll()) {
-    System.out.println(bucket.toString());
-  }
- }
   
   private String convertToJsonUsingGson(Object data) {
     Gson gson = new Gson();
@@ -133,7 +121,7 @@ public class DataServlet extends HttpServlet {
 
   /**
    * TODO: Updates the sentiment analysis data for the comment section (currently uses a placeholder)
-   
+   */
   private void updateCommentData(String comment) {
     Query query = new Query("CommentData");
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -150,7 +138,7 @@ public class DataServlet extends HttpServlet {
 
   /**
   * @return TODO: an array containing the sentiment data to be stored (currently uses a placeholder)
-  
+  */
   private int[] analyzeComment(String comment) {
     if(comment.charAt(0).isUpperCase()) {
       return new int[] {0,1};
@@ -163,7 +151,7 @@ public class DataServlet extends HttpServlet {
    * 1. There does not exist any commentData entity OR
    * 2. There are more than one commentData entities 
    * This method handles either occurence. 
-   
+   */
   private Entity handleRetrievedData(PreparedQuery data) {
     Entity commentData; 
     try {
@@ -180,7 +168,7 @@ public class DataServlet extends HttpServlet {
 
  /** Removes any results that are found that are not the correct commentData entity, 
   * as determined by the correctDataKey 
-  
+  */
   private PreparedQuery handleExtraResults(PreparedQuery data) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     for(Entity dataPoint : data.asIterable()){
@@ -198,6 +186,6 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentDataEntity);
   }
-*/
+
 }
 
