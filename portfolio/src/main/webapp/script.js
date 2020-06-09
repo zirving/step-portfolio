@@ -15,6 +15,7 @@
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(drawChart);
 
+
 var DEFAULT_COMMENT_LIMIT = '10'; 
 
 /**
@@ -112,4 +113,5 @@ function drawChart() {
       document.getElementById('chart-container'));
   chart.draw(data, options);
 }
+
 

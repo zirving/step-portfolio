@@ -30,11 +30,18 @@ public final class MeetingRequest {
   // The duration of the meeting in minutes.
   private final long duration;
 
-  public MeetingRequest(Collection<String> attendees, long duration) {
+  public MeetingRequest(Collection<String> mandatoryAttendees, Collection<String> optionalAttendees, long duration) {
     this.duration = duration;
-    this.attendees.addAll(attendees);
+    this.attendees.addAll(mandatoryAttendees);
+    this.optional_attendees.addAll(optionalAttendees);
   }
 
+  public MeetingRequest(Collection<String> mandatoryAttendees, long duration) {
+    this.duration = duration;
+    this.attendees.addAll(mandatoryAttendees);
+  }
+
+  
   /**
    * Returns a read-only copy of the people who are required to attend this meeting.
    */

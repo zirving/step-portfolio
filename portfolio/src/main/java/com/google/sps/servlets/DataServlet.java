@@ -95,7 +95,7 @@ public class DataServlet extends HttpServlet {
    * the total number of comments in the comment history. 
    */
   private int getCommentLimit(HttpServletRequest request, int total) {
-    String requestedCommentLimit = getParameter(request, "comment-limit", "All");
+    String requestedCommentLimit = getParameter(request, "comment-limit", "10");
     int commentLimit;
     if(requestedCommentLimit.equals("All")){
       commentLimit = total;
@@ -110,16 +110,16 @@ public class DataServlet extends HttpServlet {
    */
   private ArrayList<Comment> getCommentHistory(PreparedQuery storedComments, int commentLimit) {
     ArrayList<Comment> commentHistory = new ArrayList<Comment>(); 
-    for(Entity comment : storedComments.asIterable()){
+    
+    Iterator<Entity> commentIterator = storedComments.asIterator();
+    while((commentLimit > 0) && (commentIterator.hasNext())) {
+        Entity comment = commentIterator.next();
         commentHistory.add(new Comment(
           (String) comment.getProperty("username"),
           (String) comment.getProperty("comment")));
-
-        commentLimit--;
-        if(commentLimit <= 0){
-            break;
-        }
+        commentLimit--; 
     }
+
     return commentHistory;
   }
 
@@ -193,6 +193,5 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentDataEntity);
   }
-
 }
 
