@@ -12,10 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-google.charts.load('current', {'packages':['corechart']});
-google.charts.setOnLoadCallback(drawChart);
-
-
 var DEFAULT_COMMENT_LIMIT = '10'; 
 
 /**
@@ -46,7 +42,7 @@ function loadMusicVideo(){
 }
 
 function displayComments(commentLimit){
-  if(typeof commentLimit === 'undefined'){
+  if(!checkIfValidCommentLimit(commentLimit)){
       commentLimit = DEFAULT_COMMENT_LIMIT;
   }
   const url = '/data?comment-limit=' + commentLimit;
@@ -74,6 +70,18 @@ function deleteComments(){
     fetch('/delete-data', method).then(displayComments());
 }
 
+function checkIfValidCommentLimit(commentLimit){
+    if( commentLimit == '5'||
+        commentLimit == '10'||
+        commentLimit == '20'||
+        commentLimit == '50'||
+        commentLimit == 'All'){
+      return true;
+    } else {
+      return false;
+    }
+}
+
 function createCommentElement(user, comment){
   const commentElement = document.createElement('div');
 
@@ -90,28 +98,6 @@ function createCommentElement(user, comment){
   commentElement.appendChild(divider);
 
   document.getElementById("existing-comments").appendChild(commentElement);
-}
-
-/** Creates a chart and adds it to the page. */
-function drawChart() {
-  const data = new google.visualization.DataTable();
-  data.addColumn('string', 'Animal');
-  data.addColumn('number', 'Count');
-        data.addRows([
-          ['Lions', 10],
-          ['Tigers', 5],
-          ['Bears', 15]
-        ]);
-
-  const options = {
-    'title': 'Zoo Animals',
-    'width':500,
-    'height':400
-  };
-
-  const chart = new google.visualization.PieChart(
-      document.getElementById('chart-container'));
-  chart.draw(data, options);
 }
 
 
