@@ -11,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 package com.google.sps.servlets;
 
 import java.io.IOException;
@@ -19,13 +18,18 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.BucketInfo;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
-import com.google.api.gax.paging.Page;
-
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Iterator;
+import com.google.gson.Gson;
+import com.google.sps.servlets.Comment;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.PreparedQuery.TooManyResultsException;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -59,7 +63,7 @@ public class DataServlet extends HttpServlet {
       commentEntity.setProperty("comment", comment);
       commentEntity.setProperty("timestamp", timestamp);
 
-      updateCommentData(comment);
+      //updateCommentData(comment);
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(commentEntity);
@@ -127,11 +131,11 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery data = datastore.prepare(query);
 
-    Entity commentData = handleRetrievedData(PreparedQuery data); 
+    Entity commentData = handleRetrievedData(data);
 
-    int[] capitalizationData = analyzeComment(String comment); 
-    int numLower = commentData.getProperty(LOWERCASE_PROPERTY) + capitalizationData[0];
-    int numUpper = commentData.getProperty(UPPERCASE_PROPERTY) + capitalizationData[1];
+    int[] capitalizationData = analyzeComment(comment); 
+    int numLower = (int)commentData.getProperty(LOWERCASE_PROPERTY) + capitalizationData[0];
+    int numUpper = (int)commentData.getProperty(UPPERCASE_PROPERTY) + capitalizationData[1];
 
     createCommentDataEntity(numLower, numUpper);
   }
@@ -140,7 +144,7 @@ public class DataServlet extends HttpServlet {
   * @return TODO: an array containing the sentiment data to be stored (currently uses a placeholder)
   */
   private int[] analyzeComment(String comment) {
-    if(comment.charAt(0).isUpperCase()) {
+    if(Character.isUpperCase(comment.charAt(0))) {
       return new int[] {0,1};
     } else {
       return new int[] {1,0};
@@ -153,12 +157,12 @@ public class DataServlet extends HttpServlet {
    * This method handles either occurence. 
    */
   private Entity handleRetrievedData(PreparedQuery data) {
-    Entity commentData; 
+    Entity commentData = null; 
     try {
       commentData = data.asSingleEntity();
     }
     catch(TooManyResultsException e) {
-      data = handleExtraResults(PreparedQuery data);
+      data = handleExtraResults(data);
       commentData = data.asSingleEntity();
     }
     finally {
@@ -172,10 +176,13 @@ public class DataServlet extends HttpServlet {
   private PreparedQuery handleExtraResults(PreparedQuery data) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     for(Entity dataPoint : data.asIterable()){
-      if(dataPoint.getKey() != COMMENT_DATA_KEY){
+      if(dataPoint.getKey().getName() != COMMENT_DATA_KEY){
         datastore.delete(dataPoint.getKey());
         }
     }
+    Query query = new Query("CommentData");
+    PreparedQuery newData = datastore.prepare(query);
+    return newData;
   }
 
   private void createCommentDataEntity(int numLower, int numUpper) {

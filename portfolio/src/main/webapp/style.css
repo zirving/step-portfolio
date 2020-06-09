@@ -1,9 +1,112 @@
-#content {
-  margin-left: auto;
-  margin-right: auto;
-  width: 650px;
+* {
+    box-sizing: border-box;
+}
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 10px;
+  background: #e6e6e6;
+}
+h1{
+  font-size: 50px;
+  color: white;
 }
 
-#greeting-container {
+.header {
+  padding: 30px;
+  text-align: center;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.2),rgba(0, 0, 0, 0.2)), 
+        url('/images/floridalake.jpg');
+  background-size: 100%, 100%
+}
+
+.topnav {
+  overflow: hidden;
+  background-color: #1c1c1c;
+}
+
+.topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.topnav a:hover {
+  background-color: #e6e6e6;
+  color: black;
+}
+
+.content-row{
+    background-color: white; 
+    display: table;
+    padding: 20px;
+    margin-top: 20px;
+    width:100%;
+}
+
+#existing-comments{
+    background-color: white;
+    padding: 20px;
+    margin-top: 20px;
+    width:100%;
+}
+
+.leftcolumn {   
+  float: left;
+  width: 65%;
+}
+
+.rightcolumn {
+  float: left;
+  width: 35%;
+  padding-left: 20px;
+}
+
+.equalcolumn {
+  float: left;
+  width: 50%;
+  padding-right: 20px;
+}
+
+
+.footer {
+  padding: 20px;
+  text-align: center;
+  background: #dbdbdb;
   margin-top: 20px;
+}
+.footer ul li{
+    display:inline;
+}
+.footer ul li img{
+    max-height: 64px;
+    max-width:64px;
+}
+#profilepic{
+  max-width: 100%;
+  max-height: 100%; 
+}
+#profilepic img{
+  max-width: 100%;
+  max-height: 100%; 
+}
+
+.video-container {
+  text-align: center;
+  padding-bottom: 56.25%;
+  position: relative;
+  width: 100%;
+
+}
+
+.video-container iframe{
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
 }

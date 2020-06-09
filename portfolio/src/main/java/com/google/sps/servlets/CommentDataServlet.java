@@ -11,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 package com.google.sps.servlets;
 
 import java.io.IOException;
@@ -19,17 +18,22 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.BucketInfo;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
-import com.google.api.gax.paging.Page;
-
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Iterator;
+import com.google.gson.Gson;
+import com.google.sps.servlets.Comment;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.PreparedQuery.TooManyResultsException;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
-@WebServlet("/data")
-public class DataServlet extends HttpServlet {
+@WebServlet("/comment-data")
+public class CommentDataServlet extends HttpServlet {
 
   public static final String COMMENT_DATA_KEY = "capitalizationData"; 
   public static final String UPPERCASE_PROPERTY = "upperCase";
@@ -61,7 +65,7 @@ public class DataServlet extends HttpServlet {
    * This method handles either occurence. Both are returned as null, which will cause no data to be returned. 
    */
   private Entity handleRetrievedData(PreparedQuery data) {
-    Entity commentData; 
+    Entity commentData = null;
     try {
       commentData = data.asSingleEntity();
     }
@@ -72,3 +76,4 @@ public class DataServlet extends HttpServlet {
       return commentData; 
     }
   }
+}
