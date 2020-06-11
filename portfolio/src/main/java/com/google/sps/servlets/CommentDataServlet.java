@@ -35,15 +35,11 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 @WebServlet("/comment-data")
 public class CommentDataServlet extends HttpServlet {
 
-  public static final String COMMENT_DATA_KEY = "capitalizationData"; 
-  public static final String UPPERCASE_PROPERTY = "upperCase";
-  public static final String LOWERCASE_PROPERTY = "lowerCase";
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/json;");
 
-    Query query = new Query(COMMENT_DATA_KEY);
+    Query query = new Query("CommentData");
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery data = datastore.prepare(query);
     Entity commentData = handleRetrievedData(data);

@@ -30,14 +30,17 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.PreparedQuery.TooManyResultsException;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.cloud.language.v1.Document;
+import com.google.cloud.language.v1.LanguageServiceClient;
+import com.google.cloud.language.v1.Sentiment;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  public static final String COMMENT_DATA_KEY = "capitalizationData"; 
-  public static final String UPPERCASE_PROPERTY = "upperCase";
-  public static final String LOWERCASE_PROPERTY = "lowerCase";
+  public static final String COMMENT_DATA_KEY = "sentimentData"; 
+  public static final String POSITIVE_PROPERTY = "positive";
+  public static final String NEGATIVE_PROPERTY = "negative";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -63,7 +66,7 @@ public class DataServlet extends HttpServlet {
       commentEntity.setProperty("comment", comment);
       commentEntity.setProperty("timestamp", timestamp);
 
-      //updateCommentData(comment);
+      updateCommentData(comment);
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(commentEntity);
@@ -124,40 +127,62 @@ public class DataServlet extends HttpServlet {
   }
 
   /**
+   * @return the Comment Data from Datastore
+   */ 
+  private Entity getCommentData() {
+      handleCommentData(); 
+      Query query = new Query("CommentData");
+      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+      PreparedQuery data = datastore.prepare(query);
+
+      return data.asSingleEntity();
+  }
+
+  /**
    * TODO: Updates the sentiment analysis data for the comment section (currently uses a placeholder)
    */
   private void updateCommentData(String comment) {
-    Query query = new Query("CommentData");
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery data = datastore.prepare(query);
+    Entity commentData = getCommentData();
+    long[] sentimentData;
+    try{
+        sentimentData = analyzeComment(comment); 
+    }
+    catch (IOException e){
+      return;
+    }
+    long numNeg = (long)commentData.getProperty(NEGATIVE_PROPERTY) + sentimentData[0];
+    long numPos = (long)commentData.getProperty(POSITIVE_PROPERTY) + sentimentData[1];
 
-    Entity commentData = handleRetrievedData(data);
-
-    int[] capitalizationData = analyzeComment(comment); 
-    int numLower = (int)commentData.getProperty(LOWERCASE_PROPERTY) + capitalizationData[0];
-    int numUpper = (int)commentData.getProperty(UPPERCASE_PROPERTY) + capitalizationData[1];
-
-    createCommentDataEntity(numLower, numUpper);
+    createCommentDataEntity(numNeg, numPos);
   }
 
   /**
   * @return TODO: an array containing the sentiment data to be stored (currently uses a placeholder)
   */
-  private int[] analyzeComment(String comment) {
-    if(Character.isUpperCase(comment.charAt(0))) {
-      return new int[] {0,1};
+  private long[] analyzeComment(String comment) throws IOException {
+    Document commentAsDoc = Document.newBuilder().setContent(comment).setType(Document.Type.PLAIN_TEXT).build();
+    LanguageServiceClient languageService = LanguageServiceClient.create();
+    Sentiment sentiment = languageService.analyzeSentiment(commentAsDoc).getDocumentSentiment();
+    float score = sentiment.getScore();
+    languageService.close();
+
+    if(score >= 0) {
+      return new long[] {0,1};
     } else {
-      return new int[] {1,0};
+      return new long[] {1,0};
     }
   }
   
-  /** It is possible that updateCommentData will be validly called but somehow:
+  /** getCommentData could fail if: 
    * 1. There does not exist any commentData entity OR
    * 2. There are more than one commentData entities 
    * This method handles either occurence. 
    */
-  private Entity handleRetrievedData(PreparedQuery data) {
+  private void handleCommentData() {
     Entity commentData = null; 
+    Query query = new Query("CommentData");
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery data = datastore.prepare(query);
     try {
       commentData = data.asSingleEntity();
     }
@@ -166,7 +191,9 @@ public class DataServlet extends HttpServlet {
       commentData = data.asSingleEntity();
     }
     finally {
-      return commentData; 
+      if(commentData == null){
+          createCommentDataEntity(0, 0);
+      }
     }
   }
 
@@ -185,10 +212,10 @@ public class DataServlet extends HttpServlet {
     return newData;
   }
 
-  private void createCommentDataEntity(int numLower, int numUpper) {
+  private void createCommentDataEntity(long numNeg, long numPos) {
     Entity commentDataEntity = new Entity("CommentData", COMMENT_DATA_KEY);
-    commentDataEntity.setProperty(LOWERCASE_PROPERTY, numLower);
-    commentDataEntity.setProperty(UPPERCASE_PROPERTY, numUpper);
+    commentDataEntity.setProperty(NEGATIVE_PROPERTY, numNeg);
+    commentDataEntity.setProperty(POSITIVE_PROPERTY, numPos);
     
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentDataEntity);

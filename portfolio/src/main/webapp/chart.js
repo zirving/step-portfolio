@@ -17,16 +17,22 @@ google.charts.setOnLoadCallback(displayCommentData);
 
 /** Creates a chart and adds it to the page. */
 function displayCommentData() {
-  fetch('/comment-data').then(response => response.json()).then(commentData => drawChart(commentData));
+  fetch('/comment-data').then(response => response.json()).then((commentData) => {
+      if(commentData == null){
+        document.getElementById('chart-container').innerText = "There are currently no comments"; 
+      } else {
+          drawChart(commentData);
+      }
+  });
 }
 
 function drawChart(commentData) { 
   const data = new google.visualization.DataTable();
-  data.addColumn('string', 'Case');
+  data.addColumn('string', 'Sentiment');
   data.addColumn('number', 'Count');
   data.addRows([
-      ['Upper', commentData.propertyMap.upperCase],
-      ['Lower', commentData.propertyMap.lowerCase],
+      ['Positive', commentData.propertyMap.positive],
+      ['Negative', commentData.propertyMap.negative],
   ]);
   const options = {
       'title': 'Comment Sentiment Data',
