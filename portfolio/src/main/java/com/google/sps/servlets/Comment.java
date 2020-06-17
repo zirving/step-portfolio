@@ -8,4 +8,4 @@ public class Comment{
           this.username = username;
           this.content = content; 
       }
-  }
+}

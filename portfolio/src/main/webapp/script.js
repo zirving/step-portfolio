@@ -15,21 +15,6 @@
 var DEFAULT_COMMENT_LIMIT = '10'; 
 
 /**
- * Adds a random greeting to the page.
- */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
-
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
-
-  // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
-}
-
-/**
  * Adds a random quote to the page.
  */
 function addRandomQuote() {
@@ -57,7 +42,7 @@ function loadMusicVideo(){
 }
 
 function displayComments(commentLimit){
-  if(typeof commentLimit === 'undefined'){
+  if(!checkIfValidCommentLimit(commentLimit)){
       commentLimit = DEFAULT_COMMENT_LIMIT;
   }
   const url = '/data?comment-limit=' + commentLimit;
@@ -85,6 +70,18 @@ function deleteComments(){
     fetch('/delete-data', method).then(displayComments());
 }
 
+function checkIfValidCommentLimit(commentLimit){
+    if( commentLimit == '5'||
+        commentLimit == '10'||
+        commentLimit == '20'||
+        commentLimit == '50'||
+        commentLimit == 'All'){
+      return true;
+    } else {
+      return false;
+    }
+}
+
 function createCommentElement(user, comment){
   const commentElement = document.createElement('div');
 
@@ -102,3 +99,5 @@ function createCommentElement(user, comment){
 
   document.getElementById("existing-comments").appendChild(commentElement);
 }
+
+
